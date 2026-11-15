@@ -7,6 +7,11 @@ Try the deployed application here:
 
 [Open Live Weather Dashboard](https://live-weather-monitoring-dashboard.streamlit.app)
 
+## 📸 Dashboard Preview
+
+![Live Weather Monitoring Dashboard](images/dashboard.png)
+
+
 
 An interactive weather monitoring and forecasting dashboard built with **Python, Streamlit, Pandas and Plotly**.
 
