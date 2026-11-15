@@ -7,9 +7,17 @@ Try the deployed application here:
 
 [Open Live Weather Dashboard](https://live-weather-monitoring-dashboard.streamlit.app)
 
+
 ## 📸 Dashboard Preview
 
-![Live Weather Monitoring Dashboard](images/dashboard.png)
+### Main Weather Dashboard
+
+![Weather Dashboard](images/dashboard.png)
+
+### Temperature Forecast Graph
+
+![Temperature Forecast Graph](images/tem_graph.png)
+
 
 
 
