@@ -14,8 +14,216 @@ st.set_page_config(
     layout="wide"
 )
 
-st.title("Live Weather Monitoring Dashboard 🌦️")
-st.caption("Current model-based conditions and forecasts from Open-Meteo")
+
+st.markdown("""
+<style>
+
+.weather-card {
+    background: #202448;
+    border-radius: 20px;
+    padding: 25px;
+}
+
+/* PASTE YOUR NEW FORECAST CARD CSS HERE */
+
+.forecast-card {
+    background: linear-gradient(145deg, #202448, #151A36);
+    border: 1px solid rgba(167, 139, 250, 0.20);
+    border-radius: 18px;
+    padding: 15px 10px;
+    text-align: center;
+}
+
+.forecast-day {
+    color: #C4B5FD;
+    font-size: 12px;
+}
+
+.forecast-condition {
+    color: #E2E8F0;
+    font-size: 12px;
+}
+
+.forecast-high {
+    color: #FFFFFF;
+    font-size: 25px;
+    font-weight: 700;
+}
+
+.forecast-low {
+    color: #94A3B8;
+    font-size: 12px;
+}
+
+.forecast-rain {
+    color: #67E8F9;
+    font-size: 12px;
+}
+
+.atmos-header {
+    margin: 15px 0 25px;
+}
+
+.atmos-eyebrow {
+    color: #A78BFA;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+}
+
+.atmos-header h1 {
+    color: #F8FAFC;
+    font-size: clamp(30px, 3vw, 46px);
+    line-height: 1.2;
+    margin: 0;
+}
+
+.atmos-header p {
+    color: #94A3B8;
+    margin-top: 12px;
+}
+
+.city-header {
+    background: linear-gradient(120deg, #202448, #171B38);
+    border: 1px solid rgba(167, 139, 250, 0.22);
+    border-radius: 18px;
+    padding: 18px 24px;
+    margin: 22px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.city-label {
+    color: #A78BFA;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+}
+
+.city-header h2 {
+    color: #F8FAFC;
+    font-size: 24px;
+    margin: 8px 0 0;
+}
+
+.city-status {
+    color: #86EFAC;
+    background: rgba(34, 197, 94, 0.10);
+    border-radius: 999px;
+    padding: 8px 12px;
+    font-size: 12px;
+}
+
+/* Overall dashboard spacing */
+.block-container {
+    padding-top: 2rem;
+    padding-bottom: 3rem;
+    max-width: 1500px;
+}
+
+/* Main page background */
+.stApp {
+    background: #0B1023;
+}
+
+/* Sidebar styling */
+section[data-testid="stSidebar"] {
+    background: #171B38;
+    border-right: 1px solid rgba(167, 139, 250, 0.12);
+}
+
+/* Section headings */
+h2, h3 {
+    letter-spacing: -0.5px;
+}
+
+/* Chart panels */
+div[data-testid="stPlotlyChart"] {
+    background: #171B38;
+    border: 1px solid rgba(167, 139, 250, 0.14);
+    border-radius: 18px;
+    padding: 12px;
+    margin-bottom: 12px;
+}
+
+/* Sidebar select box */
+section[data-testid="stSidebar"] div[data-baseweb="select"] {
+    border-radius: 12px;
+}
+
+/* Subtle divider lines */
+hr {
+    border-color: rgba(167, 139, 250, 0.14);
+}
+
+/* -------- MOBILE RESPONSIVE STYLING -------- */
+
+@media (max-width: 768px) {
+
+    /* Reduce main page padding */
+    .block-container {
+        padding: 1rem 0.8rem 2rem;
+    }
+
+    /* Smaller dashboard title */
+    .atmos-header h1 {
+        font-size: 27px;
+        line-height: 1.25;
+    }
+
+    /* Compact city information */
+    .city-header {
+        padding: 16px;
+        gap: 10px;
+    }
+
+    .city-header h2 {
+        font-size: 21px;
+    }
+
+    /* Smaller current weather cards */
+    .weather-card {
+        padding: 18px;
+        min-height: 155px;
+    }
+
+    .weather-card-value {
+        font-size: 26px;
+    }
+
+    /* Smaller daily forecast cards */
+    .forecast-card {
+        padding: 12px 8px;
+        min-height: 160px;
+    }
+
+    .forecast-high {
+        font-size: 21px;
+    }
+
+    /* Chart spacing */
+    div[data-testid="stPlotlyChart"] {
+        padding: 6px;
+    }
+}
+
+
+</style>
+""", unsafe_allow_html=True)
+
+
+
+st.markdown("""
+<div class="atmos-header">
+    <div class="atmos-eyebrow">ATMOS WEATHER / OVERVIEW</div>
+    <h1>Weather Intelligence Dashboard 🌦️</h1>
+    <p>Current conditions, interactive forecasts and weather insights.</p>
+</div>
+""", unsafe_allow_html=True)
 
 
 with st.expander("ℹ️ About This Dashboard", expanded=False):
@@ -55,6 +263,10 @@ cities = {
 }
 
 
+st.sidebar.markdown("## 🌦️ ATMOS WEATHER")
+st.sidebar.caption("Your personal weather intelligence dashboard")
+st.sidebar.divider()
+
 selected_city = st.sidebar.selectbox(
     "📍 Select a City",
     list(cities.keys())
@@ -63,11 +275,44 @@ selected_city = st.sidebar.selectbox(
 
 latitude, longitude = cities[selected_city]
 
-st.write(f"Weather information for **{selected_city}**")
+
+st.markdown(
+    f"""
+    <div class="city-header">
+        <div>
+            <span class="city-label">CURRENT LOCATION</span>
+            <h2>📍 Weather in {selected_city}</h2>
+        </div>
+        <span class="city-status">● Forecast available</span>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
+
 
 # Manual refresh button
-if st.button("🔄 Refresh Weather Data"):
+
+# Manual refresh button in sidebar
+if st.sidebar.button("🔄 Refresh Weather Data"):
     st.rerun()
+
+
+st.sidebar.caption("⏱️ Forecast refreshes every 15 minutes")
+st.sidebar.caption("🌍 Data provided by Open-Meteo")
+
+st.sidebar.divider()
+
+st.sidebar.markdown("**📊 Dashboard Features**")
+st.sidebar.caption("• Current weather conditions")
+st.sidebar.caption("• Interactive hourly forecasts")
+st.sidebar.caption("• Seven-day weather outlook")
+st.sidebar.caption("• Weather insights and CSV exports")
+
+st.sidebar.divider()
+st.sidebar.caption("Atmos Weather · Version 2")
+
+
 
 # ---------------- API SETTINGS ----------------
 API_URL = "https://api.open-meteo.com/v1/forecast"
@@ -200,18 +445,33 @@ def make_chart(
         )
     )
 
+    
     fig.update_layout(
         height=450,
-        xaxis_title="Time (UK local time)",
-        yaxis_title=f"{column} ({unit})",
+        paper_bgcolor="#171B38",
+        plot_bgcolor="#171B38",
+        font=dict(
+            color="#E2E8F0",
+            family="Arial"
+        ),
+        title=dict(
+            font=dict(size=18, color="#F8FAFC")
+        ),
+        xaxis=dict(
+            title="Time (UK local time)",
+            showgrid=False,
+            tickfont=dict(color="#A5B4CF")
+        ),
+        yaxis=dict(
+            title=f"{column} ({unit})",
+            gridcolor="rgba(148, 163, 184, 0.12)",
+            zeroline=False,
+            tickfont=dict(color="#A5B4CF")
+        ),
         hovermode="closest",
-        margin=dict(
-            l=45,
-            r=35,
-            t=60,
-            b=45
-        )
+        margin=dict(l=45, r=30, t=65, b=45)
     )
+
 
     fig.update_xaxes(
         tickformat="%H:%M",
@@ -262,27 +522,69 @@ def show_weather_dashboard():
             "(UK local time)"
         )
 
-        st.subheader("Current Weather")
+       
+        # -------- MODERN CURRENT WEATHER CARDS --------
+        st.subheader("🌤️ Current Weather")
 
-        col1, col2, col3 = st.columns(3)
+        
+        col1, col2, col3 = st.columns(
+            3,
+            gap="medium",
+            border=False
+        )
+
 
         with col1:
-            st.metric(
-                "🌡️ Temperature",
-                f"{current['temperature_2m']} °C"
+            st.markdown(
+                f"""
+                <div class="weather-card">
+                    <div class="weather-card-icon">🌡️</div>
+                    <div class="weather-card-label">Temperature</div>
+                    <div class="weather-card-value">
+                        {current['temperature_2m']}°C
+                    </div>
+                    <div class="weather-card-caption">
+                        Current temperature
+                    </div>
+                </div>
+                """,
+                unsafe_allow_html=True
             )
 
         with col2:
-            st.metric(
-                "💧 Humidity",
-                f"{current['relative_humidity_2m']}%"
+            st.markdown(
+                f"""
+                <div class="weather-card">
+                    <div class="weather-card-icon">💧</div>
+                    <div class="weather-card-label">Humidity</div>
+                    <div class="weather-card-value">
+                        {current['relative_humidity_2m']}%
+                    </div>
+                    <div class="weather-card-caption">
+                        Relative humidity
+                    </div>
+                </div>
+                """,
+                unsafe_allow_html=True
             )
 
         with col3:
-            st.metric(
-                "💨 Wind Speed",
-                f"{current['wind_speed_10m']} km/h"
+            st.markdown(
+                f"""
+                <div class="weather-card">
+                    <div class="weather-card-icon">💨</div>
+                    <div class="weather-card-label">Wind Speed</div>
+                    <div class="weather-card-value">
+                        {current['wind_speed_10m']} km/h
+                    </div>
+                    <div class="weather-card-caption">
+                        Current wind speed
+                    </div>
+                </div>
+                """,
+                unsafe_allow_html=True
             )
+
 
         # ---------------- HOURLY DATA ----------------
         hourly = data["hourly"]
@@ -553,30 +855,47 @@ def show_weather_dashboard():
 
         daily_df["Day"] = daily_df["Date"].dt.strftime("%a %d %b")
 
-        # -------- SEVEN-DAY WEATHER CARDS --------
-        st.subheader("🌤️ Daily Weather Overview")
+        
+        
+        # -------- RESPONSIVE SEVEN-DAY WEATHER CARDS --------
 
-        weather_columns = st.columns(7)
+        # Create groups of up to 3 forecast cards
+        for start in range(0, len(daily_df), 3):
 
-        for index, row in daily_df.iterrows():
-            with weather_columns[index]:
-                st.markdown(f"**{row['Day']}**")
+            forecast_group = daily_df.iloc[start:start + 3]
 
-                st.write(row["Condition"])
+           
+            columns = st.columns(
+                3,
+                gap="medium"
+            )
 
-                st.metric(
-                    "High",
-                    f"{row['Max Temp']:.1f}°C"
-                )
 
-                st.metric(
-                    "Low",
-                    f"{row['Min Temp']:.1f}°C"
-                )
+            for column, (_, row) in zip(
+                columns,
+                forecast_group.iterrows()
+            ):
+                condition = str(row["Condition"])
+                day = str(row["Day"])
+                max_temp = float(row["Max Temp"])
+                min_temp = float(row["Min Temp"])
+                rain = float(row["Rain Chance"])
 
-                st.caption(
-                    f"🌧️ Rain: {row['Rain Chance']:.0f}%"
-                )
+                with column:
+                    st.markdown(
+                        f"""
+                        <div class="forecast-card">
+                            <div class="forecast-day">{day}</div>
+                            <div class="forecast-condition">{condition}</div>
+                            <div class="forecast-high">{max_temp:.0f}°C</div>
+                            <div class="forecast-low">Low {min_temp:.0f}°C</div>
+                            <div class="forecast-rain">💧 {rain:.0f}% rain</div>
+                        </div>
+                        """,
+                        unsafe_allow_html=True
+                    )
+
+
 
 
         # Display seven-day table
